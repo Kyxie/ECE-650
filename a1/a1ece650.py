@@ -144,7 +144,7 @@ class Map:
                 print("Error: Except a \" or \' around street name!")
         else:
             print("Error: Expect a space between the command and street name!")
-        # print(self.map)
+        print(self.map)
     
     def rm(self):
         if(self.line[2] == ' '):
@@ -165,13 +165,14 @@ class Map:
                 print("Error: Expect a \" or \' around street name!")
         else:
             print("Error: Expect a space between command and street name!")
-        # print(self.map)
+        print(self.map)
     
     def gg(self):
         intersection = []
         endPoint = []
         V = {}
         E = []
+        package = []
         if(len(self.map) == 0 or len(self.map) == 1):
             print("V = {\n}")
             print("E = {\n}")
@@ -198,37 +199,41 @@ class Map:
                                 endPoint.append((x1, y1))
                                 endPoint.append((x2, y2))
                                 endPoint.append((x3, y3))
-                                endPoint.append((x4, y4))   # The 4 points which form an intersection
-            vertices = list(set(intersection + endPoint))    # Delete the duplication and turn to a list
+                                endPoint.append((x4, y4))   # The 4 edges which form an intersection
+                                package.append(((px, py), (x1, y1), (x2, y2), (x3, y3), (x4, y4)))
+            vertices = list(set(intersection + endPoint))   # Delete the duplication and turn to a list
             for i, vertice in enumerate(vertices):
                 V[i] = vertice
-            for i in range(0, len(endPoint), 4):
-                leftPoint = endPoint[i]
-                for j in range(len(V)):
-                    if(V[j] == leftPoint):
-                        E.append(j + 1)
-                rightPoint = endPoint[i + 1]
-                for j in range(len(V)):
-                    if(V[j] == rightPoint):
-                        E.append(j + 1)
-                upPoint = endPoint[i + 2]
-                for j in range(len(V)):
-                    if(V[j] == upPoint):
-                        E.append(j + 1)
-                downPoint = endPoint[i + 3]
-                for j in range(len(V)):
-                    if(V[j] == downPoint):
-                        E.append(j + 1)
+            # 对每个交点遍历
+            #   再对四个端点遍历 
+            #     再对剩余的交点遍历
+            #       检查剩余的交点是否在线段上
+            for i in range(len(intersection)):
+                pi = intersection[i]    # The intersection
+                otherInter = intersection[:i] + intersection[i + 1:]
+                for j in range(1, 5):  # An intersection is caused by 4 endpoints
+                    pj = package[i][j]  # The end point
+                    for k in range(len(otherInter)):
+                        q = otherInter[k]   # The other intersection
+                        if(isPointOnSeg(q, pi, pj) == True):
+                            isInE(E, pi, q)
+                        else:
+                            isInE(E, pi, pj)
+            for i in range(len(E)):
+                for j in range(2):
+                    for k in range(len(V)):
+                        if(E[i][j] == V[k]):
+                            E[i][j] = k + 1
         printResult(V, E)
 
 def printResult(V, E):
     print("V = {")
     for i in range(len(V)):
-        print("{}:  ({:.2f},{:.2f})".format(i + 1, V[i][0], V[i][1]))
+        print("   {}:  ({:.2f},{:.2f})".format(i + 1, V[i][0], V[i][1]))
     print("}")
     print("E = {")
-    for i in range(0, len(E), 2):
-        print("<{},{}>,".format(E[i], E[i + 1]))
+    for i in range(len(E)):
+        print("   <{},{}>,".format(E[i][0], E[i][1]))
     print("}")
 
 def findIntersection(x1, y1, x2, y2, x3, y3, x4, y4):
@@ -270,6 +275,29 @@ def findIntersection(x1, y1, x2, y2, x3, y3, x4, y4):
         py = 'F'
         return px, py
 
+def isPointOnSeg(q, pi, pj):
+    # Point[0] means x
+    # Point[1] means y
+    qx = q[0]
+    qy = q[1]
+    pix = pi[0]
+    piy = pi[1]
+    pjx = pj[0]
+    pjy = pj[1]
+    if((qx - pix) * (pjy - piy) == (pjx - pix) * (qy - piy)
+    and min(pix, pjx) <= qx and qx <= max(pix, pjx)
+    and min(piy, pjy) <= qy and qy <= max(piy, pjy)):
+        return True
+    else:
+        return False
+
+def isInE(E, pi, pj):
+    # E: [[(x1, y1), (x2, y2)], [(x3, y3), (x4, y4)], ...]
+    # pi: (x1, y1)
+    # pj: (x2, y2)
+    if([pi, pj] not in E and [pj, pi] not in E and pi != pj):
+        E.append([pi, pj])
+
 def decodeNode(list):
     point = []
     for i in range(len(list)):
@@ -291,6 +319,7 @@ def main():
 if __name__ == "__main__":
     main()
 
+# Test
 # add "Weber Street" (2,-1)(2,2)(5,5)(5,6)(3,8)
 # add "King Street" (4,2)(4,8)
 # add "Davenport Road" (1,4)(5,8)
