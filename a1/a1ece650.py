@@ -135,16 +135,16 @@ class Map:
                     alreadyIn = []
                     for i in range(len(self.map)):
                         alreadyIn.append(self.map[i]["Name"])
-                    if(Name in alreadyIn):
-                        self.map.remove(self.map[i])  # First delete
-                        self.map.append(street.capsulate(name=Name, node=Node))  # Then add
-                    else:
-                        print('Error: There is no such street called "{}"!'.format(Name))
+                        if(Name in alreadyIn):
+                            self.map[i] = street.capsulate(name=Name, node=Node)
+                            break
+                        else:
+                            print('Error: There is no such street called "{}"!'.format(Name))
             else:
                 print("Error: Except a \" or \' around street name!")
         else:
             print("Error: Expect a space between the command and street name!")
-        print(self.map)
+        # print(self.map)
     
     def rm(self):
         if(self.line[2] == ' '):
@@ -158,20 +158,20 @@ class Map:
                 for i in range(len(self.map)):
                     alreadyIn.append(self.map[i]["Name"])
                 if(Name in alreadyIn):
-                    map.remove(self.map[i])  # Delete
+                    self.map.remove(self.map[i])  # Delete
                 else:
                     print('Error: There is no such street called "{}"!'.format(Name))
             else:
                 print("Error: Expect a \" or \' around street name!")
         else:
             print("Error: Expect a space between command and street name!")
-        print(self.map)
+        # print(self.map)
     
     def gg(self):
-        intersection = []
-        endPoint = []
         V = {}
         E = []
+        intersection = []
+        endPoint = []
         package = []
         if(len(self.map) == 0 or len(self.map) == 1):
             print("V = {\n}")
@@ -204,27 +204,28 @@ class Map:
             vertices = list(set(intersection + endPoint))   # Delete the duplication and turn to a list
             for i, vertice in enumerate(vertices):
                 V[i] = vertice
-            # 对每个交点遍历
-            #   再对四个端点遍历 
-            #     再对剩余的交点遍历
-            #       检查剩余的交点是否在线段上
             for i in range(len(intersection)):
                 pi = intersection[i]    # The intersection
                 otherInter = intersection[:i] + intersection[i + 1:]
-                for j in range(1, 5):  # An intersection is caused by 4 endpoints
-                    pj = package[i][j]  # The end point
-                    for k in range(len(otherInter)):
-                        q = otherInter[k]   # The other intersection
-                        if(isPointOnSeg(q, pi, pj) == True):
-                            isInE(E, pi, q)
-                        else:
-                            isInE(E, pi, pj)
+                if(len(otherInter) == 0):
+                    for j in range(1, 5):
+                        pj = package[i][j]
+                        isInE(E, pi, pj)
+                else:
+                    for j in range(1, 5):  # An intersection is caused by 4 endpoints
+                        pj = package[i][j]  # The end point
+                        for k in range(len(otherInter)):
+                            q = otherInter[k]   # The other intersection
+                            if(isPointOnSeg(q, pi, pj) == True):
+                                isInE(E, pi, q)
+                            else:
+                                isInE(E, pi, pj)
             for i in range(len(E)):
                 for j in range(2):
                     for k in range(len(V)):
                         if(E[i][j] == V[k]):
                             E[i][j] = k + 1
-        printResult(V, E)
+            printResult(V, E)
 
 def printResult(V, E):
     print("V = {")
@@ -323,3 +324,7 @@ if __name__ == "__main__":
 # add "Weber Street" (2,-1)(2,2)(5,5)(5,6)(3,8)
 # add "King Street" (4,2)(4,8)
 # add "Davenport Road" (1,4)(5,8)
+# mod "Weber Street" (2,1)(2,2)
+
+# add "A" (-1,-1)(1,1)
+# add "B" (-1,1)(1,-1)
