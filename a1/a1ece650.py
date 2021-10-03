@@ -94,7 +94,7 @@ class Map:
                     print("Error: Expect a space between street name and vertice!")
                 else:
                     street = Street(self.line, self.map)  # Create a new street dictionary
-                    Name = street.getStreetName()
+                    Name = street.getStreetName().lower()
                     Node = street.getNode()
                     alreadyIn = []  # Streets which have already added
                     if(len(self.map) == 0):
@@ -130,7 +130,7 @@ class Map:
                     print("Error: Expect a space between street name and vertice!")
                 else:
                     street = Street(self.line, self.map)
-                    Name = street.getStreetName()
+                    Name = street.getStreetName().lower()
                     Node = street.getNode()
                     alreadyIn = []
                     for i in range(len(self.map)):
@@ -154,6 +154,7 @@ class Map:
                     if(self.line[i] == '"'): # If we found "
                         index.append(i) # return the index of two " in line
                 Name = self.line[index[0]+1: index[1]] # Contents in the middle of two "
+                Name = Name.lower()
                 alreadyIn = []
                 for i in range(len(self.map)):
                     alreadyIn.append(self.map[i]["Name"])
@@ -325,6 +326,4 @@ if __name__ == "__main__":
 # add "King Street" (4,2)(4,8)
 # add "Davenport Road" (1,4)(5,8)
 # mod "Weber Street" (2,1)(2,2)
-
-# add "A" (-1,-1)(1,1)
-# add "B" (-1,1)(1,-1)
+# rm "King Street"
