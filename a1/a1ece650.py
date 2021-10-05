@@ -64,6 +64,9 @@ class Map:
 
         elif(self.line[:2] == "gg"):
             self.gg()
+        
+        elif(self.line[:3] == "map"):
+            print(self.map)
 
         elif(self.line[0] == ' '):    # Finish code
             print("Finished reading input")
@@ -135,11 +138,11 @@ class Map:
                     alreadyIn = []
                     for i in range(len(self.map)):
                         alreadyIn.append(self.map[i]["Name"])
-                        if(Name in alreadyIn):
+                        if(alreadyIn[i] == Name):
                             self.map[i] = street.capsulate(name=Name, node=Node)
                             break
-                        else:
-                            print('Error: There is no such street called "{}"!'.format(Name))
+                    if(Name not in alreadyIn):
+                        print('Error: There is no such street called "{}"!'.format(Name))
             else:
                 print("Error: Except a \" or \' around street name!")
         else:
@@ -158,10 +161,11 @@ class Map:
                 alreadyIn = []
                 for i in range(len(self.map)):
                     alreadyIn.append(self.map[i]["Name"])
-                if(Name in alreadyIn):
-                    self.map.remove(self.map[i])  # Delete
-                else:
-                    print('Error: There is no such street called "{}"!'.format(Name))
+                    if(Name in alreadyIn):
+                        self.map.remove(self.map[i])  # Delete
+                        break
+                if(Name not in alreadyIn):
+                        print('Error: There is no such street called "{}"!'.format(Name))
             else:
                 print("Error: Expect a \" or \' around street name!")
         else:
