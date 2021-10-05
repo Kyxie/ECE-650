@@ -212,7 +212,7 @@ class Map:
             for i in range(len(intersection)):
                 pi = intersection[i]    # The intersection
                 otherInter = intersection[:i] + intersection[i + 1:]
-                if(len(otherInter) == 0):
+                if(len(list(set(otherInter))) == 0 or len(list(set(otherInter))) == 1):
                     for j in range(1, 5):
                         pj = package[i][j]
                         isInE(E, pi, pj)
