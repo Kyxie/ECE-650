@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import sys
+import re
 
 # YOUR CODE GOES HERE
 
@@ -53,19 +54,20 @@ class Map:
         self.map = map
     
     def checkFunc(self):
-        if(self.line[:3] == "add"):  # If the command is add
+        cmd = re.search(r'\s', self.line)
+        if(self.line[:cmd.span()[0]] == "add"):  # If the command is add
             self.add()
 
-        elif(self.line[:3] == "mod"):
+        elif(self.line[:cmd.span()[0]] == "mod"):
             self.mod()
 
-        elif(self.line[:2] == "rm"):
+        elif(self.line[:cmd.span()[0]] == "rm"):
             self.rm()
 
-        elif(self.line[:2] == "gg"):
+        elif(self.line[:cmd.span()[0]] == "gg"):
             self.gg()
         
-        elif(self.line[:3] == "map"):
+        elif(self.line[:cmd.span()[0]] == "map"):
             print(self.map)
 
         elif(self.line[0] == ' '):    # Finish code
@@ -96,19 +98,57 @@ class Map:
                 elif(self.line[min(leftBracketIndex) - 1] != ' '):
                     print("Error: Expect a space between street name and vertice!")
                 else:
+                    do = 1
                     street = Street(self.line, self.map)  # Create a new street dictionary
                     Name = street.getStreetName().lower()
+
+                    if(Name[0] == ' ' or Name[-1] == ' '):
+                        print("Error: No Leading or following white space!")
+                        do = 0
+                    
+                    moreSpace = re.search(r'\s{2,10}', Name)
+                    if(moreSpace):
+                        print("Error: No more than 1 white space in street name!")
+                        do = 0
+
+                    plus = re.search(r'\+', self.line)
+                    if(plus):
+                        print("Error: Input positive number without '+' sign!")
+                        do = 0
+
+                    numOfBracket = 0
+                    for i in range(len(self.line)):
+                        if(self.line[i] == '('):
+                            numOfBracket = numOfBracket + 1
+                    if(numOfBracket == 1 or numOfBracket == 0):
+                        print("Error: Not enough points for a line")
+                        do = 0
+                    
+                    specialCharacter = "~!@#$%^&*()_+`1234567890-=\{\}|[]\\;:,./<>?"
+                    for i in range(len(specialCharacter)):
+                        if(specialCharacter[i] in Name):
+                            print("Error: No special characters or numbers!")
+                            do = 0
+                            break
+                    
+                    cordinateRegex = re.search(r'\(.*\)', self.line)
+                    cordinate = self.line[cordinateRegex.span()[0]:cordinateRegex.span()[1]]
+                    if(' ' in cordinate):
+                        print("Error: Invalid cordination assignment, no space!")
+                        do = 0
+
                     Node = street.getNode()
                     alreadyIn = []  # Streets which have already added
-                    if(len(self.map) == 0):
-                        self.map.append(street.capsulate(name=Name, node=Node))  # Add this dictionary in map list
-                    else:
-                        for i in range(len(self.map)):
-                            alreadyIn.append(self.map[i]["Name"])
-                        if(Name in alreadyIn):
-                            print('Warning: The street "{}" has already been added!'.format(Name))
-                        else:
+                    if(do == 1):
+                        if(len(self.map) == 0):
                             self.map.append(street.capsulate(name=Name, node=Node))  # Add this dictionary in map list
+                        else:
+                            for i in range(len(self.map)):
+                                alreadyIn.append(self.map[i]["Name"])
+                            if(Name in alreadyIn):
+                                print('Warning: The street "{}" has already been added!'.format(Name))
+                            else:
+                                self.map.append(street.capsulate(name=Name, node=Node))  # Add this dictionary in map list
             else:
                 print("Error: Except a \" or \' around street name!")
         else:
@@ -132,17 +172,28 @@ class Map:
                 elif(self.line[min(leftBracketIndex) - 1] != ' '):
                     print("Error: Expect a space between street name and vertice!")
                 else:
-                    street = Street(self.line, self.map)
-                    Name = street.getStreetName().lower()
-                    Node = street.getNode()
-                    alreadyIn = []
-                    for i in range(len(self.map)):
-                        alreadyIn.append(self.map[i]["Name"])
-                        if(alreadyIn[i] == Name):
-                            self.map[i] = street.capsulate(name=Name, node=Node)
-                            break
-                    if(Name not in alreadyIn):
-                        print('Error: There is no such street called "{}"!'.format(Name))
+                    do = 1
+
+                    numOfBracket = 0
+                    for i in range(len(self.line)):
+                        if(self.line[i] == '('):
+                            numOfBracket = numOfBracket + 1
+                    if(numOfBracket == 1 or numOfBracket == 0):
+                        print("Error: Not enough points for a line")
+                        do = 0
+    
+                    if(do == 1):
+                        street = Street(self.line, self.map)
+                        Name = street.getStreetName().lower()
+                        Node = street.getNode()
+                        alreadyIn = []
+                        for i in range(len(self.map)):
+                            alreadyIn.append(self.map[i]["Name"])
+                            if(alreadyIn[i] == Name):
+                                self.map[i] = street.capsulate(name=Name, node=Node)
+                                break
+                        if(Name not in alreadyIn):
+                            print('Error: There is no such street called "{}"!'.format(Name))
             else:
                 print("Error: Except a \" or \' around street name!")
         else:
@@ -152,20 +203,28 @@ class Map:
     def rm(self):
         if(self.line[2] == ' '):
             if(self.line[3] == '"' or self.line[3] == "'"):
-                index = []
-                for i in range(len(self.line)):
-                    if(self.line[i] == '"'): # If we found "
-                        index.append(i) # return the index of two " in line
-                Name = self.line[index[0]+1: index[1]] # Contents in the middle of two "
-                Name = Name.lower()
-                alreadyIn = []
-                for i in range(len(self.map)):
-                    alreadyIn.append(self.map[i]["Name"])
-                    if(Name in alreadyIn):
-                        self.map.remove(self.map[i])  # Delete
-                        break
-                if(Name not in alreadyIn):
-                        print('Error: There is no such street called "{}"!'.format(Name))
+                do = 1
+                
+                rmCord = re.search(r'(\"|\')$', self.line)
+                if(rmCord == None):
+                    print("Error: No cordination in command 'rm'!")
+                    do = 0
+
+                if(do == 1):
+                    index = []
+                    for i in range(len(self.line)):
+                        if(self.line[i] == '"'): # If we found "
+                            index.append(i) # return the index of two " in line
+                    Name = self.line[index[0]+1: index[1]] # Contents in the middle of two "
+                    Name = Name.lower()
+                    alreadyIn = []
+                    for i in range(len(self.map)):
+                        alreadyIn.append(self.map[i]["Name"])
+                        if(Name in alreadyIn):
+                            self.map.remove(self.map[i])  # Delete
+                            break
+                    if(Name not in alreadyIn):
+                            print('Error: There is no such street called "{}"!'.format(Name))
             else:
                 print("Error: Expect a \" or \' around street name!")
         else:
@@ -173,64 +232,70 @@ class Map:
         # print(self.map)
     
     def gg(self):
-        V = {}
-        E = []
-        intersection = []
-        endPoint = []
-        package = []
-        if(len(self.map) == 0 or len(self.map) == 1):
-            print("V = {\n}")
-            print("E = {\n}")
-        else:
-            for i in range(len(self.map)):
-                chosenStreet = [self.map[i]] # Change to a list
-                otherStreet = self.map[i + 1:]
-                chosenPoint = decodeNode(chosenStreet)  # List of points
-                otherPoint = decodeNode(otherStreet)
-                for j in range(len(otherPoint)):
-                    for k in range(len(chosenPoint[0]) - 1):
-                        for l in range(len(otherPoint[j]) - 1):
-                            x1 = chosenPoint[0][k][0]
-                            y1 = chosenPoint[0][k][1]
-                            x2 = chosenPoint[0][k + 1][0]
-                            y2 = chosenPoint[0][k + 1][1]
-                            x3 = otherPoint[j][l][0]
-                            y3 = otherPoint[j][l][1]
-                            x4 = otherPoint[j][l + 1][0]
-                            y4 = otherPoint[j][l + 1][1]
-                            (px, py) = findIntersection(x1, y1, x2, y2, x3, y3, x4, y4)
-                            if((px, py) != ('F', 'F')):
-                                intersection.append((px, py))   # Intersection
-                                endPoint.append((x1, y1))
-                                endPoint.append((x2, y2))
-                                endPoint.append((x3, y3))
-                                endPoint.append((x4, y4))   # The 4 edges which form an intersection
-                                package.append(((px, py), (x1, y1), (x2, y2), (x3, y3), (x4, y4)))
-            vertices = list(set(intersection + endPoint))   # Delete the duplication and turn to a list
-            for i, vertice in enumerate(vertices):
-                V[i] = vertice
-            for i in range(len(intersection)):
-                pi = intersection[i]    # The intersection
-                otherInter = intersection[:i] + intersection[i + 1:]
-                if(len(list(set(otherInter))) == 0 or len(list(set(otherInter))) == 1):
-                    for j in range(1, 5):
-                        pj = package[i][j]
-                        isInE(E, pi, pj)
-                else:
-                    for j in range(1, 5):  # An intersection is caused by 4 endpoints
-                        pj = package[i][j]  # The end point
-                        for k in range(len(otherInter)):
-                            q = otherInter[k]   # The other intersection
-                            if(isPointOnSeg(q, pi, pj) == True):
-                                isInE(E, pi, q)
-                            else:
-                                isInE(E, pi, pj)
-            for i in range(len(E)):
-                for j in range(2):
-                    for k in range(len(V)):
-                        if(E[i][j] == V[k]):
-                            E[i][j] = k + 1
-            printResult(V, E)
+        do = 1
+        checkgg = "gg\n"
+        if(checkgg != self.line):
+            print("Error: Wrong 'gg' command")
+            do = 0
+        if(do == 1):
+            V = {}
+            E = []
+            intersection = []
+            endPoint = []
+            package = []
+            if(len(self.map) == 0 or len(self.map) == 1):
+                print("V = {\n}")
+                print("E = {\n}")
+            else:
+                for i in range(len(self.map)):
+                    chosenStreet = [self.map[i]] # Change to a list
+                    otherStreet = self.map[i + 1:]
+                    chosenPoint = decodeNode(chosenStreet)  # List of points
+                    otherPoint = decodeNode(otherStreet)
+                    for j in range(len(otherPoint)):
+                        for k in range(len(chosenPoint[0]) - 1):
+                            for l in range(len(otherPoint[j]) - 1):
+                                x1 = chosenPoint[0][k][0]
+                                y1 = chosenPoint[0][k][1]
+                                x2 = chosenPoint[0][k + 1][0]
+                                y2 = chosenPoint[0][k + 1][1]
+                                x3 = otherPoint[j][l][0]
+                                y3 = otherPoint[j][l][1]
+                                x4 = otherPoint[j][l + 1][0]
+                                y4 = otherPoint[j][l + 1][1]
+                                (px, py) = findIntersection(x1, y1, x2, y2, x3, y3, x4, y4)
+                                if((px, py) != ('F', 'F')):
+                                    intersection.append((px, py))   # Intersection
+                                    endPoint.append((x1, y1))
+                                    endPoint.append((x2, y2))
+                                    endPoint.append((x3, y3))
+                                    endPoint.append((x4, y4))   # The 4 edges which form an intersection
+                                    package.append(((px, py), (x1, y1), (x2, y2), (x3, y3), (x4, y4)))
+                vertices = list(set(intersection + endPoint))   # Delete the duplication and turn to a list
+                for i, vertice in enumerate(vertices):
+                    V[i] = vertice
+                for i in range(len(intersection)):
+                    pi = intersection[i]    # The intersection
+                    otherInter = intersection[:i] + intersection[i + 1:]
+                    if(len(otherInter) == 0):
+                        for j in range(1, 5):
+                            pj = package[i][j]
+                            isInE(E, pi, pj)
+                    else:
+                        for j in range(1, 5):  # An intersection is caused by 4 endpoints
+                            pj = package[i][j]  # The end point
+                            for k in range(len(otherInter)):
+                                q = otherInter[k]   # The other intersection
+                                if(isPointOnSeg(q, pi, pj) == True):
+                                    isInE(E, pi, q)
+                                else:
+                                    isInE(E, pi, pj)
+                for i in range(len(E)):
+                    for j in range(2):
+                        for k in range(len(V)):
+                            if(E[i][j] == V[k]):
+                                E[i][j] = k + 1
+                printResult(V, E)
 
 def printResult(V, E):
     print("V = {")
