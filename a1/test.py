@@ -1,26 +1,7 @@
-#!/usr/bin/env python3
-# A simple unit test example. Replace by your own tests
+import re
 
-import sys
-import unittest
-
-
-class MyTest(unittest.TestCase):
-    def test_upper(self):
-        """Test the upper() function of class string"""
-        self.assertEqual('foo'.upper(), 'FOO')
-
-    def test_isupper(self):
-        """Test isupper() function of class string"""
-        self.assertTrue('FOO'.isupper())
-        self.assertFalse('foo'.isupper())
-        self.assertFalse('foo'.isupper())
-        self.assertFalse('Foo'.isupper())
-
-    def test_failing(self):
-        """A test that fails"""
-        self.assertEqual(True, False)
-
-
-if __name__ == '__main__':
-    unittest.main()
+psd = "add \"King Street\" (1,2)(3,4)"
+test_str = re.search(r'\(.*\)', psd)
+if test_str:
+    print(len(psd))
+    print(psd[test_str.span()[0]:test_str.span()[1]])

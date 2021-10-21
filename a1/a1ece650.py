@@ -55,19 +55,19 @@ class Map:
     
     def checkFunc(self):
         cmd = re.search(r'\s', self.line)
-        if(self.line[:cmd.span()[0]] == "add"):  # If the command is add
+        if(self.line[:3] == "add"):  # If the command is add
             self.add()
 
-        elif(self.line[:cmd.span()[0]] == "mod"):
+        elif(self.line[:3] == "mod"):
             self.mod()
 
-        elif(self.line[:cmd.span()[0]] == "rm"):
+        elif(self.line[:2] == "rm"):
             self.rm()
 
-        elif(self.line[:cmd.span()[0]] == "gg"):
+        elif(self.line[:2] == "gg"):
             self.gg()
         
-        elif(self.line[:cmd.span()[0]] == "map"):
+        elif(self.line[:3] == "map"):
             print(self.map)
 
         elif(self.line[0] == ' '):    # Finish code
@@ -383,7 +383,7 @@ def main():
     # by the assignment
     map = []
     while True:
-        line = sys.stdin.readline()
+        line = sys.stdin.readline().strip('\n')
         world = Map(line, map)
         world.checkFunc()
 
