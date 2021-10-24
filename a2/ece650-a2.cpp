@@ -66,18 +66,55 @@ vector <vector <int>> E(string line)
     return edge;
 }
 
-
-int s(int doS, string line)
+int checkFind(int start, int end, int vertex)
 {
     int doFind = 1;
-    if(doS)
+    if(start > vertex || end > vertex)
     {
-        return 0;
+        doFind = 0;
+        cout << "Error: Point in s is out of the range of point in V!" << endl;
+        return doFind;
+    }
+    else
+        return doFind;
+}
+
+
+void find(int doFind, int start, int end, vector <vector <int>> edge)
+{
+    if(doFind == 1)
+    {
+        cout << "start = " << start << endl;
+        cout << "end = " << end << endl;
+        cout << "doFind = " << doFind << endl;
+    }
+    else
+        cout << "Error: Point in s is out of the range of point in V!" << endl;
+}
+
+
+void s(int doS, string line, int vertex, vector <vector <int>> edge)
+{
+    int doFind = 1;
+    int start;
+    int end;
+    if(doS == 1)
+    {
+        char number[5] = {0};
+        int i;
+        for(i = 0; line[1 + i + 1] != ' '; i++)
+            number[i] = line[1 + i + 1];
+        start = atoi(number);
+        for(int j = 0; i + j + 2 <= line.length(); j++)
+            number[j] = line[i + j + 2];
+        end = atoi(number);
+        doFind = checkFind(start, end, vertex);
+        find(doFind, start, end, edge);
     }
     else
     {
         doFind = 0;
-        return doFind;
+        cout << "Error: Point in E is out of the range of point in V!" << endl;
     }
 }
 
@@ -93,12 +130,13 @@ int checkE(int vertex, vector <vector <int>> edge)
             {
                 cout << "Error: Point in E is out of the range of point in V!" << endl;
                 doS = 0;
-                return doS;
+                break;
             }
             else
-                return doS;
+                continue;
         }
     }
+    return doS;
 }
 
 
@@ -110,7 +148,8 @@ int main()
         getline(cin, line);
         int vertex;
         vector <vector <int>> edge;
-        int doS = 1;
+        int doS;
+        int doFind;
         switch(line[0])
         {
             case 'V':
@@ -121,7 +160,7 @@ int main()
                 doS = checkE(vertex, edge);
                 continue;
             case 's':
-                s(doS, line);
+                s(doS, line, vertex, edge);
                 continue;
             default:
                 cout << "Error: No such command!" << endl;
@@ -131,4 +170,4 @@ int main()
 
 // V 15
 // E {<2,6>,<2,8>,<2,5>,<6,5>,<5,8>,<6,10>,<10,8>}
-// s 2 10
+// s 2 1
