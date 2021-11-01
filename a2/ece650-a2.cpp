@@ -1,6 +1,7 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
+#include <queue>
 
 using namespace std;
 
@@ -15,6 +16,27 @@ int V(string line)
         vertice[i - 2] = line[i];
     vertex = atoi(vertice.c_str());
     return vertex;
+}
+
+
+void printMap(vector <vector <int>> edge)
+{
+    for(int i = 0; i < edge[0].size(); i++)
+        cout << '(' << edge[0][i] << ',' << edge[1][i] << ')' << endl;
+}
+
+
+queue <int> findPartner(int side, vector <vector <int>> edge)
+{
+    queue <int> partner;
+    for(int i = 0; i < edge[0].size(); i++)
+    {
+        if(edge[0][i] == side)
+            partner.push(edge[1][i]);
+        if(edge[1][i] == side)
+            partner.push(edge[0][i]);
+    }
+    return partner;
 }
 
 
@@ -66,6 +88,7 @@ vector <vector <int>> E(string line)
     return edge;
 }
 
+
 int checkFind(int start, int end, int vertex)
 {
     int doFind = 1;
@@ -80,13 +103,25 @@ int checkFind(int start, int end, int vertex)
 }
 
 
+void iter(queue <int> middle)
+{
+    if(middle.empty())
+    {
+        for(int i = 0; i < middle.size(); i++)
+        {
+            middle[i] = i;
+        }
+    }
+}
+
+
 void find(int doFind, int start, int end, vector <vector <int>> edge)
 {
     if(doFind == 1)
     {
-        cout << "start = " << start << endl;
-        cout << "end = " << end << endl;
-        cout << "doFind = " << doFind << endl;
+        queue <int> middle;
+        middle.push(start);
+        iter(middle);
     }
     else
         cout << "Error: Point in s is out of the range of point in V!" << endl;
@@ -149,7 +184,6 @@ int main()
         int vertex;
         vector <vector <int>> edge;
         int doS;
-        int doFind;
         switch(line[0])
         {
             case 'V':
