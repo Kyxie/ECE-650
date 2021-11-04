@@ -76,16 +76,19 @@ vector <int> findNumber(vector <int> first, vector <int> second)
 }
 
 
-bool checks(int start, int end)
+int checks(int start, int end)
 {
-    bool sOK = true;
+    // sOK = 1 means good
+    // sOK = 2 means s out of V
+    // sOK = 3 means no route
+    int sOK = 1;
     if(start > VNum || end > VNum)
-        sOK = false;
+        sOK = 2;
     vector <int> set = findNumber(first, second);
     bool noStart = alreadyIn(set, start);
     bool noEnd = alreadyIn(set, end);
-    if(noStart == false || noEnd == false)
-        sOK = false;
+    if(start <= VNum && end <= VNum && (noStart == false || noEnd == false))
+        sOK = 3;
     return sOK;
 }
 
@@ -200,15 +203,20 @@ int main()
             for(int j = 0; i + j + 2 <= line.length(); j++)
                 number[j] = line[i + j + 2];
             end = atoi(number);
-            if(checks(start, end))
+            if(checks(start, end) == 1)
             {
                 vector <int> route = find(start, end);
                 print(route);
                 continue;
             }
-            else
+            else if(checks(start, end) == 2)
             {
                 cout << "Error: Point in s must be in the range of E and V!" << endl;
+                continue;
+            }
+            else
+            {
+                cout << "Error: There is no route!" << endl;
                 continue;
             }
         }
