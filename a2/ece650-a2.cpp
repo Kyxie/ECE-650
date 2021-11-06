@@ -123,10 +123,20 @@ vector <int> find(int start, int end)
             }
         }
     }
+
+    // for(int i = 1; i <= VNum; i++)
+    //     cout << "dist[" << i << "] = " << distance[i] << endl;
+    // cout << "**************************" << endl;
+    // for(int i = 1; i <= VNum; i++)
+    //     cout << "prev[" << i << "] = " << previous[i] << endl;
+
     vector <int> route;
     route.push_back(end);
     while(route.back() != start)
-        route.push_back(previous[route.back()]);
+        if(previous[route.back()] <= VNum)
+            route.push_back(previous[route.back()]);
+        else
+            break;
     return route;
 }
 
@@ -149,7 +159,7 @@ int main()
     while (!cin.eof())
     {
         string line;
-        getline(cin, line); 
+        getline(cin, line);
         if(line[0] == 'V')
         {
             first.clear();
@@ -206,7 +216,10 @@ int main()
             if(checks(start, end) == 1)
             {
                 vector <int> route = find(start, end);
-                print(route);
+                if(route.size() > 1)
+                    print(route);
+                else
+                    cout << "Error: No path exists!" << endl;
                 continue;
             }
             else if(checks(start, end) == 2)
@@ -216,7 +229,7 @@ int main()
             }
             else
             {
-                cout << "Error: There is no route!" << endl;
+                cout << "Error: No path exists!" << endl;
                 continue;
             }
         }
