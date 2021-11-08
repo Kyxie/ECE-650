@@ -306,8 +306,9 @@ def printResult(V, E):
         print("   {}:  ({:.2f},{:.2f})".format(i + 1, V[i][0], V[i][1]))
     print("}")
     print("E = {")
-    for i in range(len(E)):
+    for i in range(len(E) - 1):
         print("   <{},{}>,".format(E[i][0], E[i][1]))
+    print("   <{},{}>".format(E[len(E) - 1][0], E[len(E) - 1][1]))
     print("}")
 
 
