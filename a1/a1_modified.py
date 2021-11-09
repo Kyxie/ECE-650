@@ -288,10 +288,12 @@ class Map:
                             pj = package[i][j]  # The end point
                             for k in range(len(otherInter)):
                                 q = otherInter[k]   # The other intersection
-                                if(isPointOnSeg(q, pi, pj) == True):
+                                if(isPointOnSeg(q, pi, pj) == 1):
                                     isInE(E, pi, q)
-                                else:
+                                elif(isPointOnSeg(q, pi, pj) == 2):
                                     isInE(E, pi, pj)
+                                else:
+                                    continue
                 for i in range(len(E)):
                     for j in range(2):
                         for k in range(len(V)):
@@ -363,12 +365,15 @@ def isPointOnSeg(q, pi, pj):
     piy = pi[1]
     pjx = pj[0]
     pjy = pj[1]
-    if((qx - pix) * (pjy - piy) == (pjx - pix) * (qy - piy)
-       and min(pix, pjx) <= qx and qx <= max(pix, pjx)
-       and min(piy, pjy) <= qy and qy <= max(piy, pjy)):
-        return True
-    else:
-        return False
+    if((((qx - pix) * (pjy - piy) - (pjx - pix) * (qy - piy) < 0.01)
+            and ((qx - pix) * (pjy - piy) - (pjx - pix) * (qy - piy) > -0.01))):    # In a line
+        if(min(pix, pjx) <= qx and qx <= max(pix, pjx)
+           and min(piy, pjy) <= qy and qy <= max(piy, pjy)):    # In a line and between 2 points
+            return 1
+        else:   # In a line but not between 2 points
+            return 2
+    else:   # Not in a line
+        return 3
 
 
 def isInE(E, pi, pj):
@@ -406,8 +411,12 @@ if __name__ == "__main__":
     main()
 
 # Test
-# add "Weber Street" (2,-1)(2,2)(5,5)(5,6)(3,8)
-# add "King Street" (4,2)(4,8)
-# add "Davenport Road" (1,4)(5,8)
+# add "Weber Street" (2,-1) (2,2) (5,5) (5,6) (3,8)
+# add "King Street S" (3,2) (4,8)
+# add "Davenport Road" (0,0) (5,8)
 # mod "Weber Street" (2,1)(2,2)
 # rm "King Street"
+
+# add "Weber Street" (-1,0)(4,0)
+# add "King Street" (0,-1)(0,4)
+# add "Davenport Road" (0,3)(3,0)
