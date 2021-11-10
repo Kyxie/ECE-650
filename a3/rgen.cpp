@@ -70,17 +70,33 @@ void assign(string line)
     }
 }
 
+int randGen(int min, int max)
+{
+    ifstream urandom("/dev/urandom");
+    if (urandom.fail())
+        return 1;
+    char ch = 'a';
+    while (1)
+    {
+        urandom.read(&ch, 1);
+        if (min - 1 < (unsigned int)ch && (unsigned int)ch < max + 1)
+            break;
+    }
+    urandom.close();
+    return (unsigned int)ch;
+}
+
 void generate()
 {
-    srand((int)time(NULL));
-    int streetNum = (rand() % (ks - 2 + 1)) + 2;
+    int streetNum = randGen(2, ks); // streetNum [2, ks]
+    int wait = randGen(5, kl);      // wait [5, kl]
+    cout << wait;
+    // for (int i = 0; i < streetNum; i++)
+    // {
+    //     srand((int)time(NULL));
+    //     int lineSeg = (rand() % (kn - 1 + 1)) + 1; // wait [1, kl]
 
-    srand((int)time(NULL));
-    int wait = (rand() % (kl - 5 + 1)) + 5;
-
-    for (int i = 0; i < streetNum; i++)
-    {
-    }
+    // }
 }
 
 int main()
