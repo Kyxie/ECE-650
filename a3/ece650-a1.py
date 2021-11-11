@@ -76,7 +76,7 @@ class Map:
         elif(self.line[:3] == "clr"):
             self.map.clear()
 
-        elif(self.line == ""):
+        elif(self.line == ''):
             ...
 
         else:
@@ -304,14 +304,12 @@ class Map:
 
 
 def printResult(V, E):
-    print("V = {")
-    for i in range(len(V)):
-        print("   {}:  ({:.2f},{:.2f})".format(i + 1, V[i][0], V[i][1]))
-    print("}")
-    print("E = {")
+    print("V ", end='')
+    print(len(V))
+    print("E {", end='')
     for i in range(len(E) - 1):
-        print("   <{},{}>,".format(E[i][0], E[i][1]))
-    print("   <{},{}>".format(E[len(E) - 1][0], E[len(E) - 1][1]))
+        print("<{},{}>,".format(E[i][0], E[i][1]), end='')
+    print("<{},{}>".format(E[len(E) - 1][0], E[len(E) - 1][1]), end='')
     print("}")
 
 
