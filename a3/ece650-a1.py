@@ -73,6 +73,9 @@ class Map:
         elif(self.line[:3] == "map"):
             print(self.map)
 
+        elif(self.line[:3] == "clr"):
+            self.map.clear()
+
         elif(self.line == ""):
             ...
 
@@ -288,12 +291,10 @@ class Map:
                             pj = package[i][j]  # The end point
                             for k in range(len(otherInter)):
                                 q = otherInter[k]   # The other intersection
-                                if(isPointOnSeg(q, pi, pj) == 1):
-                                    isInE(E, pi, q)
-                                elif(isPointOnSeg(q, pi, pj) == 2):
-                                    isInE(E, pi, pj)
-                                else:
+                                if(isPointOnSeg(q, pi, pj)):
+                                    pj = q
                                     continue
+                            isInE(E, pi, pj)
                 for i in range(len(E)):
                     for j in range(2):
                         for k in range(len(V)):
@@ -356,7 +357,9 @@ def findIntersection(x1, y1, x2, y2, x3, y3, x4, y4):
         return px, py
 
 
-def isPointOnSeg(q, pi, pj):
+def isPointOnSeg(q, pi, pj):    # q: The other intersection
+    # pi: The intersection
+    # pj: The endpoints
     # Point[0] means x
     # Point[1] means y
     qx = q[0]
@@ -365,15 +368,13 @@ def isPointOnSeg(q, pi, pj):
     piy = pi[1]
     pjx = pj[0]
     pjy = pj[1]
-    if((((qx - pix) * (pjy - piy) - (pjx - pix) * (qy - piy) < 0.01)
-            and ((qx - pix) * (pjy - piy) - (pjx - pix) * (qy - piy) > -0.01))):    # In a line
-        if(min(pix, pjx) <= qx and qx <= max(pix, pjx)
-           and min(piy, pjy) <= qy and qy <= max(piy, pjy)):    # In a line and between 2 points
-            return 1
-        else:   # In a line but not between 2 points
-            return 2
-    else:   # Not in a line
-        return 3
+    if(((qx - pix) * (pjy - piy) - (pjx - pix) * (qy - piy) < 0.01)
+       and ((qx - pix) * (pjy - piy) - (pjx - pix) * (qy - piy) > -0.01)
+       and min(pix, pjx) <= qx and qx <= max(pix, pjx)
+       and min(piy, pjy) <= qy and qy <= max(piy, pjy)):    # In a line and between 2 points
+        return True
+    else:
+        return False    # Not in a line
 
 
 def isInE(E, pi, pj):
