@@ -3,7 +3,12 @@
 
 #define INF 100000
 
-using namespace std;
+using std::cerr;
+using std::cin;
+using std::cout;
+using std::endl;
+using std::string;
+using std::vector;
 
 int VNum;
 vector<int> first;
@@ -190,7 +195,7 @@ int main()
             {
                 first.clear();
                 second.clear();
-                cout << "Error: Point in E is out of the range of point in V!" << endl;
+                cerr << "Error: Point in E is out of the range of point in V!" << endl;
                 continue;
             }
         }
@@ -212,12 +217,12 @@ int main()
                 if (route.size() > 1)
                     print(route);
                 else
-                    cout << "Error: No path exists!" << endl;
+                    cerr << "Error: No path exists!" << endl;
                 continue;
             }
             else if (checks(start, end) == 2)
             {
-                cout << "Error: Point in s must be in the range of E and V!" << endl;
+                cerr << "Error: Point in s must be in the range of E and V!" << endl;
                 continue;
             }
             else

@@ -1,10 +1,12 @@
 #include <iostream>
 #include <string>
-#include <ctime>
+#include <fstream>
 
+using std::cerr;
 using std::cin;
 using std::cout;
 using std::endl;
+using std::ifstream;
 using std::rand;
 using std::string;
 
@@ -45,7 +47,6 @@ void assign(string line)
         }
         kn = atoi(number);
     }
-    cout << pl;
     if (pl != string::npos)
     {
         char number[5];
@@ -70,7 +71,7 @@ void assign(string line)
     }
 }
 
-int randGen(int min, int max)
+int unRandGen(int min, int max) // Generate positive random number
 {
     ifstream urandom("/dev/urandom");
     if (urandom.fail())
@@ -86,17 +87,37 @@ int randGen(int min, int max)
     return (unsigned int)ch;
 }
 
-void generate()
+int randGen(int c) // Generate positive and negative random number
 {
-    int streetNum = randGen(2, ks); // streetNum [2, ks]
-    int wait = randGen(5, kl);      // wait [5, kl]
-    cout << wait;
-    // for (int i = 0; i < streetNum; i++)
-    // {
-    //     srand((int)time(NULL));
-    //     int lineSeg = (rand() % (kn - 1 + 1)) + 1; // wait [1, kl]
+    ifstream urandom("/dev/urandom");
+    if (urandom.fail())
+        return 1;
+    char ch = 'a';
+    while (true)
+    {
+        urandom.read(&ch, 1);
+        if (-c - 1 < ch && ch < c + 1)
+            break;
+    }
+    urandom.close();
+    return ch;
+}
 
-    // }
+void generateMap()
+{
+    int streetNum = unRandGen(2, ks); // streetNum [2, ks]
+    int wait = unRandGen(5, kl);      // wait [5, kl]
+    for (int i = 0; i < streetNum; i++)
+    {
+        int lineSeg = unRandGen(1, kn); // lineSeg [1, kn]
+        int x[lineSeg] = {0};
+        int y[lineSeg] = {0};
+        for (int j = 0; j < lineSeg; j++)
+        {
+            x[j] = randGen(kc);
+            y[j] = randGen(kc);
+        }
+    }
 }
 
 int main()
@@ -105,22 +126,18 @@ int main()
     getline(cin, line);
     const int A = 25;
     assign(line);
-    while (1)
+    for (int i = 0; i <= A; i++)
     {
-        int i = 1;
-        if (i <= A)
+        if (i < A)
         {
-            cout << "clr" << endl;
-            generate();
+            // cout << "clr" << endl;
+            generateMap();
         }
         else
         {
-            cout << "Error: failed to generate valid input for 25 simultaneous attempts!";
+            cerr << "Error: failed to generate valid input for 25 simultaneous attempts!" << endl;
             exit(0);
         }
     }
     return 0;
 }
-
-// -s 5 -n 4 -l 5
-//
