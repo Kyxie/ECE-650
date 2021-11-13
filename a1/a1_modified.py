@@ -1,3 +1,10 @@
+'''
+Date: 2021-11-10 15:09:38
+LastEditors: Kunyang Xie
+LastEditTime: 2021-11-13 16:06:27
+FilePath: /a1/a1_modified.py
+'''
+
 #!/usr/bin/env python3
 import sys
 import re

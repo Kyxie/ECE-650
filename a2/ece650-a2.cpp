@@ -1,3 +1,10 @@
+/*
+ * @Date: 2021-11-10 15:09:38
+ * @LastEditors: Kunyang Xie
+ * @LastEditTime: 2021-11-13 16:07:25
+ * @FilePath: /a2/ece650-a2.cpp
+ */
+
 #include <iostream>
 #include <vector>
 
@@ -234,3 +241,7 @@ int main()
     }
     return 0;
 }
+
+// V 15
+// E {<2,6>,<2,8>,<2,5>,<6,5>,<5,8>,<6,10>,<10,8>}
+// s 2 10

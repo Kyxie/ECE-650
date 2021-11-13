@@ -1,9 +1,16 @@
+/*
+ * @Date: 2021-11-10 15:09:38
+ * @LastEditors: Kunyang Xie
+ * @LastEditTime: 2021-11-13 16:05:48
+ * @FilePath: /a3/rgen.cpp
+ */
+
 #include <fstream>
 #include <iostream>
 #include <string>
 #include <unistd.h>
 #include <vector>
-const int A = 2;  // Attempt times
+const int A = 25;  // Attempt times
 
 using namespace std;
 
