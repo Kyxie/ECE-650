@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-11-10 15:09:38
  * @LastEditors: Kunyang Xie
- * @LastEditTime: 2021-11-13 16:05:48
+ * @LastEditTime: 2021-11-14 19:53:02
  * @FilePath: /a3/rgen.cpp
  */
 
@@ -10,7 +10,10 @@
 #include <string>
 #include <unistd.h>
 #include <vector>
-const int A = 25;  // Attempt times
+const int A = 5;  // Attempt times
+const int smin = 2;
+const int nmin = 2;
+const int lmin = 5;
 
 using namespace std;
 
@@ -40,47 +43,65 @@ void assign(string line)
 	int pc = line.find(c);
 	if (ps != string::npos)
 	{
-		char number[5];
+		vector<int> number;
 		int i = 0;
 		while (line[ps + 3 + i] >= '0' and line[ps + 3 + i] <= '9')
 		{
-			number[i] = line[ps + 3 + i];
+			number.push_back(line[ps + 3 + i]);
 			i++;
 		}
-		ks = atoi(number);
+		char array[number.size()];
+		for (int j = 0; j < number.size(); j++)
+			array[j] = number[j];
+		ks = atoi(array);
+		if (ks <= smin - 1)
+			ks = smin;
 	}
 	if (pn != string::npos)
 	{
-		char number[5];
+		vector<int> number;
 		int i = 0;
 		while (line[pn + 3 + i] >= '0' and line[pn + 3 + i] <= '9')
 		{
-			number[i] = line[pn + 3 + i];
+			number.push_back(line[pn + 3 + i]);
 			i++;
 		}
-		kn = atoi(number);
+		char array[number.size()];
+		for (int j = 0; j < number.size(); j++)
+			array[j] = number[j];
+		kn = atoi(array);
+		if (kn <= nmin - 1)
+			kn = nmin;
 	}
 	if (pl != string::npos)
 	{
-		char number[5];
+		vector<int> number;
 		int i = 0;
 		while (line[pl + 3 + i] >= '0' and line[pl + 3 + i] <= '9')
 		{
-			number[i] = line[pl + 3 + i];
+			number.push_back(line[pl + 3 + i]);
 			i++;
 		}
-		kl = atoi(number);
+		char array[number.size()];
+		for (int j = 0; j < number.size(); j++)
+			array[j] = number[j];
+		kl = atoi(array);
+		if (kl <= lmin - 1)
+			kl = lmin;
 	}
 	if (pc != string::npos)
 	{
-		char number[5];
+		vector<int> number;
 		int i = 0;
 		while (line[pc + 3 + i] >= '0' and line[pc + 3 + i] <= '9')
 		{
-			number[i] = line[pc + 3 + i];
+			number.push_back(line[pc + 3 + i]);
 			i++;
 		}
-		kc = atoi(number);
+		char array[number.size()];
+		for (int j = 0; j < number.size(); j++)
+			array[j] = number[j];
+		kc = atoi(array);
 	}
 }
 
@@ -170,11 +191,15 @@ bool noOverlapInStreet(int x, int y, vector<int> first, vector<int> second)
 		((x - end1x) * (end2y - end1y) - (y - end1y) * (end2x - end1x) > -0.01))
 	{
 		// 3 points in a line
-		if ((min(x, end2x) <= end1x && end1x <= max(x, end2x)) && (min(y, end2y) <= end1y && end1y <= max(y, end2y)))
-			// Only the last point in middle is available
-			notLap = true;
-		else
-			notLap = false;
+
+		/* If no annotation, allow to generate point on the extension cord.
+		 * if ((min(x, end2x) <= end1x && end1x <= max(x, end2x)) && (min(y, end2y) <= end1y && end1y <= max(y, end2y)))
+		 * 	// Only the last point in middle is available
+		 * 	notLap = true;
+		 * else
+		 *	// notLap = false;
+		 */
+		notLap = false;
 	}
 	return notLap;
 }
@@ -227,16 +252,17 @@ bool noOverlapInMap(int x, int y, int lastx, int lasty, vector<struct Street> Ma
 
 void generateMap()
 {
-	int streetNum = unRandGen(2, ks);  // streetNum [2, ks]
+	int streetNum = unRandGen(smin, ks);  // streetNum [2, ks]
 	for (int i = 0; i < streetNum; i++)
 	{
 		struct Street street;
 		string streetName = "Street" + to_string(i + 1);
 		street.streetName = streetName;
-		int lineSegNum = unRandGen(1, kn);	// lineSegNum [1, kn]
-		vector<int> first;					// Be stored
+		int lineSegNum = unRandGen(nmin, kn);  // lineSegNum [1, kn]
+		vector<int> first;					   // Be stored
 		vector<int> second;
 		int j = 0;
+		int k = 1;	// Attempt time
 		while (j < lineSegNum)
 		{
 			int x = randGen(kc);  // New points
@@ -338,6 +364,8 @@ void generateMap()
 						continue;
 				}
 			}
+			// k++;
+			// if(k >= A)
 		}
 		street.cordx = first;
 		street.cordy = second;
@@ -367,7 +395,7 @@ int main()
 	{
 		if (i < A - 1)
 		{
-			int wait = unRandGen(5, kl);  // wait [5, kl]
+			int wait = unRandGen(lmin, kl);	 // wait [5, kl]
 			Map.clear();
 			generateMap();
 			printCommand(Map);
@@ -389,3 +417,4 @@ int main()
 }
 
 // -s 5 -n 4 -l 5
+// -s 10 -n 5 -l 5 -c 20

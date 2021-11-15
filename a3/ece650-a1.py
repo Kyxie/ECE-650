@@ -1,7 +1,7 @@
 '''
 Date: 2021-11-10 15:09:38
 LastEditors: Kunyang Xie
-LastEditTime: 2021-11-13 16:03:43
+LastEditTime: 2021-11-14 16:24:25
 FilePath: /a3/ece650-a1.py
 '''
 
@@ -253,8 +253,8 @@ class Map:
             endPoint = []
             package = []
             if(len(self.map) == 0 or len(self.map) == 1):
-                print("V = {\n}")
-                print("E = {\n}")
+                print("V 0")
+                print("E {}")
             else:
                 for i in range(len(self.map)):
                     chosenStreet = [self.map[i]]  # Change to a list
