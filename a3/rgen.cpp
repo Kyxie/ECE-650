@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-11-10 15:09:38
  * @LastEditors: Kunyang Xie
- * @LastEditTime: 2021-11-14 19:53:02
+ * @LastEditTime: 2021-11-14 22:38:06
  * @FilePath: /a3/rgen.cpp
  */
 
@@ -10,9 +10,9 @@
 #include <string>
 #include <unistd.h>
 #include <vector>
-const int A = 5;  // Attempt times
+const int A = 25;  // Attempt times
 const int smin = 2;
-const int nmin = 2;
+const int nmin = 2;	 // Line segment number, probably need to be changed.
 const int lmin = 5;
 
 using namespace std;
@@ -31,77 +31,30 @@ struct Street
 
 vector<struct Street> Map;
 
-void assign(string line)
+void assign(int argc, char* argv[])
 {
-	string s = "-s ";
-	string n = "-n ";
-	string l = "-l ";
-	string c = "-c ";
-	int ps = line.find(s);	// ps is the start index
-	int pn = line.find(n);
-	int pl = line.find(l);
-	int pc = line.find(c);
-	if (ps != string::npos)
+	for (int i = 1; i < argc; i++)
 	{
-		vector<int> number;
-		int i = 0;
-		while (line[ps + 3 + i] >= '0' and line[ps + 3 + i] <= '9')
+		if (argv[i] == "-s")
 		{
-			number.push_back(line[ps + 3 + i]);
-			i++;
+			ks = atoi(argv[i + 1]);
+			if (ks < smin)
+				ks = smin;
 		}
-		char array[number.size()];
-		for (int j = 0; j < number.size(); j++)
-			array[j] = number[j];
-		ks = atoi(array);
-		if (ks <= smin - 1)
-			ks = smin;
-	}
-	if (pn != string::npos)
-	{
-		vector<int> number;
-		int i = 0;
-		while (line[pn + 3 + i] >= '0' and line[pn + 3 + i] <= '9')
+		if (argv[i] == "-n")
 		{
-			number.push_back(line[pn + 3 + i]);
-			i++;
+			kn = atoi(argv[i + 1]);
+			if (kn < nmin)
+				kn = nmin;
 		}
-		char array[number.size()];
-		for (int j = 0; j < number.size(); j++)
-			array[j] = number[j];
-		kn = atoi(array);
-		if (kn <= nmin - 1)
-			kn = nmin;
-	}
-	if (pl != string::npos)
-	{
-		vector<int> number;
-		int i = 0;
-		while (line[pl + 3 + i] >= '0' and line[pl + 3 + i] <= '9')
+		if (argv[i] == "-l")
 		{
-			number.push_back(line[pl + 3 + i]);
-			i++;
+			kl = atoi(argv[i + 1]);
+			if (kl < lmin)
+				kl = lmin;
 		}
-		char array[number.size()];
-		for (int j = 0; j < number.size(); j++)
-			array[j] = number[j];
-		kl = atoi(array);
-		if (kl <= lmin - 1)
-			kl = lmin;
-	}
-	if (pc != string::npos)
-	{
-		vector<int> number;
-		int i = 0;
-		while (line[pc + 3 + i] >= '0' and line[pc + 3 + i] <= '9')
-		{
-			number.push_back(line[pc + 3 + i]);
-			i++;
-		}
-		char array[number.size()];
-		for (int j = 0; j < number.size(); j++)
-			array[j] = number[j];
-		kc = atoi(array);
+		if (argv[i] == "-c")
+			kc = atoi(argv[i + 1]);
 	}
 }
 
@@ -267,6 +220,11 @@ void generateMap()
 		{
 			int x = randGen(kc);  // New points
 			int y = randGen(kc);
+			if (k >= A)
+			{
+				cerr << "Error: failed to generate valid input for " << A << " simultaneous attempts!" << endl;
+				exit(0);
+			}
 			if (Map.size() < 1)	 // 0 street
 			{
 				if (first.size() == 0)	// Nothing in the street
@@ -274,6 +232,7 @@ void generateMap()
 					first.push_back(x);
 					second.push_back(y);
 					j++;
+					k = 1;
 					continue;
 				}
 				else if (first.size() == 1)	 // street already has 1 segment
@@ -283,10 +242,14 @@ void generateMap()
 						first.push_back(x);
 						second.push_back(y);
 						j++;
+						k = 1;
 						continue;
 					}
 					else
+					{
+						k++;
 						continue;
+					}
 				}
 				else if (first.size() == 2)	 // street already has 2 segments
 				{
@@ -295,10 +258,14 @@ void generateMap()
 						first.push_back(x);
 						second.push_back(y);
 						j++;
+						k = 1;
 						continue;
 					}
 					else
+					{
+						k++;
 						continue;
+					}
 				}
 				else  // street already has 3 or more segments
 				{
@@ -308,10 +275,14 @@ void generateMap()
 						first.push_back(x);
 						second.push_back(y);
 						j++;
+						k = 1;
 						continue;
 					}
 					else
+					{
+						k++;
 						continue;
+					}
 				}
 			}
 			else  // More or equal to 2 streets
@@ -321,6 +292,7 @@ void generateMap()
 					first.push_back(x);
 					second.push_back(y);
 					j++;
+					k = 1;
 					continue;
 				}
 				else if (first.size() == 1)	 // street already has 1 segment
@@ -331,10 +303,14 @@ void generateMap()
 						first.push_back(x);
 						second.push_back(y);
 						j++;
+						k = 1;
 						continue;
 					}
 					else
+					{
+						k++;
 						continue;
+					}
 				}
 				else if (first.size() == 2)	 // street already has 2 segments
 				{
@@ -344,10 +320,14 @@ void generateMap()
 						first.push_back(x);
 						second.push_back(y);
 						j++;
+						k = 1;
 						continue;
 					}
 					else
+					{
+						k++;
 						continue;
+					}
 				}
 				else  // street already has 3 or more segments
 				{
@@ -358,14 +338,16 @@ void generateMap()
 						first.push_back(x);
 						second.push_back(y);
 						j++;
+						k = 1;
 						continue;
 					}
 					else
+					{
+						k++;
 						continue;
+					}
 				}
 			}
-			// k++;
-			// if(k >= A)
 		}
 		street.cordx = first;
 		street.cordy = second;
@@ -386,32 +368,16 @@ void printCommand(vector<struct Street> Map)
 	cout << "gg" << endl;
 }
 
-int main()
+int main(int argc, char* argv[])
 {
-	string line;
-	getline(cin, line);
-	assign(line);
-	for (int i = 0; i <= A; i++)
+	assign(argc, argv);
+	while (1)
 	{
-		if (i < A - 1)
-		{
-			int wait = unRandGen(lmin, kl);	 // wait [5, kl]
-			Map.clear();
-			generateMap();
-			printCommand(Map);
-			sleep(wait);
-		}
-		else if (i == A - 1)
-		{
-			Map.clear();
-			generateMap();
-			printCommand(Map);
-		}
-		else
-		{
-			cerr << "Error: failed to generate valid input for " << A << " simultaneous attempts!" << endl;
-			exit(0);
-		}
+		int wait = unRandGen(lmin, kl);	 // wait [5, kl]
+		Map.clear();
+		generateMap();
+		printCommand(Map);
+		sleep(wait);
 	}
 	return 0;
 }
