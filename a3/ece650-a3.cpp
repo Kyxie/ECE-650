@@ -1,11 +1,15 @@
 /*
  * @Date: 2021-11-10 15:09:38
  * @LastEditors: Kunyang Xie
- * @LastEditTime: 2021-11-15 20:37:41
+ * @LastEditTime: 2021-11-15 22:49:47
  * @FilePath: /a3/ece650-a3.cpp
  */
+
+#include <fcntl.h>
 #include <iostream>
+#include <sys/wait.h>
 #include <unistd.h>
+#include <vector>
 
 using namespace std;
 
@@ -27,17 +31,42 @@ void a2()
 	execv(argv[0], argv);
 }
 
-void a2Input()
+string a2Input()
 {
-	while (!cin.eof())
-	{
-		string line;
-		getline(cin, line);
-		cout << line << endl;
-	}
+	string line;
+	getline(cin, line);
+	return line;
 }
 
 int main(int argc, char *argv[])
 {
-	a1();
+	vector<pid_t> kids;
+	pid_t pid;
+	int rgentoA1[2];
+	pipe(rgentoA1);
+	pid = fork();
+	if (pid == 0)
+	{
+		dup2(rgentoA1[0], STDIN_FILENO);
+		close(rgentoA1[1]);
+		close(rgentoA1[0]);
+		a1();
+	}
+	if (pid < 0)
+	{
+		cerr << "Error: Fork error!" << endl;
+		return 1;
+	}
+	kids.push_back(pid);
+	dup2(rgentoA1[1], STDOUT_FILENO);
+	close(rgentoA1[0]);
+	close(rgentoA1[1]);
+	rgen(argc, argv);
+
+	for (pid_t k : kids)
+	{
+		int status;
+		kill(k, SIGTERM);
+		waitpid(k, &status, 0);
+	}
 }

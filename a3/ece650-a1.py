@@ -1,7 +1,7 @@
 '''
 Date: 2021-11-10 15:09:38
 LastEditors: Kunyang Xie
-LastEditTime: 2021-11-14 16:24:25
+LastEditTime: 2021-11-15 22:24:25
 FilePath: /a3/ece650-a1.py
 '''
 
@@ -138,10 +138,10 @@ class Map:
                         print("Error: Not enough points for a line")
                         do = 0
 
-                    specialCharacter = "~!@#$%^&*()_+`1234567890-=\{\}|[]\\;:,./<>?"
+                    specialCharacter = "~!@#$%^&*()_+`-=\{\}|[]\\;:,./<>?"
                     for i in range(len(specialCharacter)):
                         if(specialCharacter[i] in Name):
-                            print("Error: No special characters or numbers!")
+                            print("Error: No special characters!")
                             do = 0
                             break
 

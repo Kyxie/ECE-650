@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-11-10 15:09:38
  * @LastEditors: Kunyang Xie
- * @LastEditTime: 2021-11-14 22:38:06
+ * @LastEditTime: 2021-11-15 22:52:31
  * @FilePath: /a3/rgen.cpp
  */
 
@@ -12,7 +12,7 @@
 #include <vector>
 const int A = 25;  // Attempt times
 const int smin = 2;
-const int nmin = 2;	 // Line segment number, probably need to be changed.
+const int nmin = 1;	 // Line segment number, probably need to be changed.
 const int lmin = 5;
 
 using namespace std;
@@ -216,13 +216,13 @@ void generateMap()
 		vector<int> second;
 		int j = 0;
 		int k = 1;	// Attempt time
-		while (j < lineSegNum)
+		while (j <= lineSegNum)
 		{
 			int x = randGen(kc);  // New points
 			int y = randGen(kc);
 			if (k >= A)
 			{
-				cerr << "Error: failed to generate valid input for " << A << " simultaneous attempts!" << endl;
+				cerr << "Error: Failed to generate valid input for " << A << " simultaneous attempts!" << endl;
 				exit(0);
 			}
 			if (Map.size() < 1)	 // 0 street
