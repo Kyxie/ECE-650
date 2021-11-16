@@ -1,35 +1,43 @@
 /*
  * @Date: 2021-11-10 15:09:38
  * @LastEditors: Kunyang Xie
- * @LastEditTime: 2021-11-14 16:53:42
+ * @LastEditTime: 2021-11-15 20:37:41
  * @FilePath: /a3/ece650-a3.cpp
  */
-
 #include <iostream>
 #include <unistd.h>
 
 using namespace std;
 
-int rgen()
+void rgen(int argc, char *argv[])
 {
-	char *argv[2] = {"rgen", NULL};
-	return execv("rgen", argv);
+	argv[0] = (char *)"./rgen";
+	execv(argv[0], argv);
 }
 
-int a1()
+void a1()
 {
-	char *argv[3] = {"python", "ece650-a1.py", NULL};
-	return execvp("python", argv);
+	char *argv[] = {(char *)"python3", (char *)"ece650-a1.py", NULL};
+	execvp(argv[0], argv);
 }
 
-int a2()
+void a2()
 {
-	char *argv[2] = {"ece650-a2.cpp", NULL};
-	return execv("ece650-a2.cpp", argv);
+	char *argv[] = {(char *)"./ece650-a2", NULL};
+	execv(argv[0], argv);
 }
 
-int main(int argc, char **argv)
+void a2Input()
 {
-	a2();
-	return 0;
+	while (!cin.eof())
+	{
+		string line;
+		getline(cin, line);
+		cout << line << endl;
+	}
+}
+
+int main(int argc, char *argv[])
+{
+	a1();
 }
