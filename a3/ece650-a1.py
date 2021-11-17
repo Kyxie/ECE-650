@@ -1,7 +1,7 @@
 '''
 Date: 2021-11-10 15:09:38
 LastEditors: Kunyang Xie
-LastEditTime: 2021-11-15 22:24:25
+LastEditTime: 2021-11-16 19:33:47
 FilePath: /a3/ece650-a1.py
 '''
 
@@ -288,28 +288,33 @@ class Map:
                 vertices = list(set(intersection + endPoint))
                 for i, vertice in enumerate(vertices):
                     V[i] = vertice
-                for i in range(len(intersection)):
-                    pi = intersection[i]    # The intersection
-                    otherInter = intersection[:i] + intersection[i + 1:]
-                    if(len(otherInter) == 0):
-                        for j in range(1, 5):
-                            pj = package[i][j]
-                            isInE(E, pi, pj)
-                    else:
-                        for j in range(1, 5):  # An intersection is caused by 4 endpoints
-                            pj = package[i][j]  # The end point
-                            for k in range(len(otherInter)):
-                                q = otherInter[k]   # The other intersection
-                                if(isPointOnSeg(q, pi, pj)):
-                                    pj = q
-                                    continue
-                            isInE(E, pi, pj)
-                for i in range(len(E)):
-                    for j in range(2):
-                        for k in range(len(V)):
-                            if(E[i][j] == V[k]):
-                                E[i][j] = k + 1
-                printResult(V, E)
+                if(len(V) == 0):
+                    print("V 0")
+                    print("E {}")
+                else:
+                    for i in range(len(intersection)):
+                        pi = intersection[i]    # The intersection
+                        otherInter = intersection[:i] + intersection[i + 1:]
+                        if(len(otherInter) == 0):
+                            for j in range(1, 5):
+                                pj = package[i][j]
+                                isInE(E, pi, pj)
+                        else:
+                            for j in range(1, 5):  # An intersection is caused by 4 endpoints
+                                pj = package[i][j]  # The end point
+                                for k in range(len(otherInter)):
+                                    # The other intersection
+                                    q = otherInter[k]
+                                    if(isPointOnSeg(q, pi, pj)):
+                                        pj = q
+                                        continue
+                                isInE(E, pi, pj)
+                    for i in range(len(E)):
+                        for j in range(2):
+                            for k in range(len(V)):
+                                if(E[i][j] == V[k]):
+                                    E[i][j] = k + 1
+                    printResult(V, E)
 
 
 def printResult(V, E):
@@ -408,7 +413,7 @@ def main():
     # by the assignment
     map = []
     while True:
-        line = sys.stdin.readline().strip('')
+        line = sys.stdin.readline()
         world = Map(line, map)
         world.checkFunc()
         if line == "":

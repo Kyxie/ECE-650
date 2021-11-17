@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-11-10 15:09:38
  * @LastEditors: Kunyang Xie
- * @LastEditTime: 2021-11-15 22:52:31
+ * @LastEditTime: 2021-11-16 13:46:31
  * @FilePath: /a3/rgen.cpp
  */
 
@@ -33,28 +33,30 @@ vector<struct Street> Map;
 
 void assign(int argc, char* argv[])
 {
-	for (int i = 1; i < argc; i++)
+	int i;
+	for (i = 1; i < argc; i++)
 	{
-		if (argv[i] == "-s")
+		switch (argv[i][1])
 		{
+		case 's':
 			ks = atoi(argv[i + 1]);
 			if (ks < smin)
 				ks = smin;
-		}
-		if (argv[i] == "-n")
-		{
+			break;
+		case 'n':
 			kn = atoi(argv[i + 1]);
 			if (kn < nmin)
 				kn = nmin;
-		}
-		if (argv[i] == "-l")
-		{
+			break;
+		case 'l':
 			kl = atoi(argv[i + 1]);
 			if (kl < lmin)
 				kl = lmin;
-		}
-		if (argv[i] == "-c")
+			break;
+		case 'c':
 			kc = atoi(argv[i + 1]);
+			break;
+		}
 	}
 }
 
