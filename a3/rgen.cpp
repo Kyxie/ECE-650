@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-11-10 15:09:38
  * @LastEditors: Kunyang Xie
- * @LastEditTime: 2021-11-16 13:46:31
+ * @LastEditTime: 2021-11-18 14:38:24
  * @FilePath: /a3/rgen.cpp
  */
 
@@ -10,17 +10,17 @@
 #include <string>
 #include <unistd.h>
 #include <vector>
-const int A = 25;  // Attempt times
+const int A = 25; // Attempt times
 const int smin = 2;
-const int nmin = 1;	 // Line segment number, probably need to be changed.
+const int nmin = 1; // Line segment number, probably need to be changed.
 const int lmin = 5;
 
 using namespace std;
 
-int ks = 10;  // Street number
-int kn = 5;	  // Segment number
-int kl = 5;	  // Wait time
-int kc = 20;  // Cordination range
+int ks = 10; // Street number
+int kn = 5;	 // Segment number
+int kl = 5;	 // Wait time
+int kc = 20; // Cordination range
 
 struct Street
 {
@@ -31,7 +31,7 @@ struct Street
 
 vector<struct Street> Map;
 
-void assign(int argc, char* argv[])
+void assign(int argc, char *argv[])
 {
 	int i;
 	for (i = 1; i < argc; i++)
@@ -60,7 +60,7 @@ void assign(int argc, char* argv[])
 	}
 }
 
-int unRandGen(int min, int max)	 // Generate positive random number
+int unRandGen(int min, int max) // Generate positive random number
 {
 	ifstream urandom("/dev/urandom");
 	if (urandom.fail())
@@ -76,7 +76,7 @@ int unRandGen(int min, int max)	 // Generate positive random number
 	return (unsigned int)ch;
 }
 
-int randGen(int c)	// Generate positive and negative random number
+int randGen(int c) // Generate positive and negative random number
 {
 	ifstream urandom("/dev/urandom");
 	if (urandom.fail())
@@ -138,9 +138,9 @@ bool noOverlapInStreet(int x, int y, vector<int> first, vector<int> second)
 {
 	// If has overlap, return 0
 	bool notLap = true;
-	int end1x = first[first.size() - 1];  // Last point
+	int end1x = first[first.size() - 1]; // Last point
 	int end1y = second[second.size() - 1];
-	int end2x = first[first.size() - 2];  // Second last point
+	int end2x = first[first.size() - 2]; // Second last point
 	int end2y = second[second.size() - 2];
 	if (((x - end1x) * (end2y - end1y) - (y - end1y) * (end2x - end1x) < 0.01) &&
 		((x - end1x) * (end2y - end1y) - (y - end1y) * (end2x - end1x) > -0.01))
@@ -207,29 +207,29 @@ bool noOverlapInMap(int x, int y, int lastx, int lasty, vector<struct Street> Ma
 
 void generateMap()
 {
-	int streetNum = unRandGen(smin, ks);  // streetNum [2, ks]
+	int streetNum = unRandGen(smin, ks); // streetNum [2, ks]
 	for (int i = 0; i < streetNum; i++)
 	{
 		struct Street street;
 		string streetName = "Street" + to_string(i + 1);
 		street.streetName = streetName;
-		int lineSegNum = unRandGen(nmin, kn);  // lineSegNum [1, kn]
-		vector<int> first;					   // Be stored
+		int lineSegNum = unRandGen(nmin, kn); // lineSegNum [1, kn]
+		vector<int> first;					  // Be stored
 		vector<int> second;
 		int j = 0;
-		int k = 1;	// Attempt time
+		int k = 1; // Attempt time
 		while (j <= lineSegNum)
 		{
-			int x = randGen(kc);  // New points
+			int x = randGen(kc); // New points
 			int y = randGen(kc);
 			if (k >= A)
 			{
 				cerr << "Error: Failed to generate valid input for " << A << " simultaneous attempts!" << endl;
-				exit(0);
+				break;
 			}
-			if (Map.size() < 1)	 // 0 street
+			if (Map.size() < 1) // 0 street
 			{
-				if (first.size() == 0)	// Nothing in the street
+				if (first.size() == 0) // Nothing in the street
 				{
 					first.push_back(x);
 					second.push_back(y);
@@ -237,7 +237,7 @@ void generateMap()
 					k = 1;
 					continue;
 				}
-				else if (first.size() == 1)	 // street already has 1 segment
+				else if (first.size() == 1) // street already has 1 segment
 				{
 					if (noSamePointInStreet(x, y, first, second) == 1)
 					{
@@ -253,7 +253,7 @@ void generateMap()
 						continue;
 					}
 				}
-				else if (first.size() == 2)	 // street already has 2 segments
+				else if (first.size() == 2) // street already has 2 segments
 				{
 					if (noSamePointInStreet(x, y, first, second) == 1 && noOverlapInStreet(x, y, first, second) == 1)
 					{
@@ -269,7 +269,7 @@ void generateMap()
 						continue;
 					}
 				}
-				else  // street already has 3 or more segments
+				else // street already has 3 or more segments
 				{
 					if (noSamePointInStreet(x, y, first, second) == 1 && noOverlapInStreet(x, y, first, second) == 1 &&
 						noCrossInStreet(x, y, first, second) == 1)
@@ -287,9 +287,9 @@ void generateMap()
 					}
 				}
 			}
-			else  // More or equal to 2 streets
+			else // More or equal to 2 streets
 			{
-				if (first.size() == 0)	// Nothing in the street
+				if (first.size() == 0) // Nothing in the street
 				{
 					first.push_back(x);
 					second.push_back(y);
@@ -297,7 +297,7 @@ void generateMap()
 					k = 1;
 					continue;
 				}
-				else if (first.size() == 1)	 // street already has 1 segment
+				else if (first.size() == 1) // street already has 1 segment
 				{
 					if (noOverlapInMap(x, y, first.back(), second.back(), Map) == 1 &&
 						noSamePointInStreet(x, y, first, second) == 1)
@@ -314,7 +314,7 @@ void generateMap()
 						continue;
 					}
 				}
-				else if (first.size() == 2)	 // street already has 2 segments
+				else if (first.size() == 2) // street already has 2 segments
 				{
 					if (noOverlapInMap(x, y, first.back(), second.back(), Map) == 1 &&
 						noSamePointInStreet(x, y, first, second) == 1 && noOverlapInStreet(x, y, first, second) == 1)
@@ -331,7 +331,7 @@ void generateMap()
 						continue;
 					}
 				}
-				else  // street already has 3 or more segments
+				else // street already has 3 or more segments
 				{
 					if (noOverlapInMap(x, y, first.back(), second.back(), Map) == 1 &&
 						noSamePointInStreet(x, y, first, second) == 1 && noOverlapInStreet(x, y, first, second) == 1 &&
@@ -370,12 +370,12 @@ void printCommand(vector<struct Street> Map)
 	cout << "gg" << endl;
 }
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
 	assign(argc, argv);
 	while (1)
 	{
-		int wait = unRandGen(lmin, kl);	 // wait [5, kl]
+		int wait = unRandGen(lmin, kl); // wait [5, kl]
 		Map.clear();
 		generateMap();
 		printCommand(Map);
