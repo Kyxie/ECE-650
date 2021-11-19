@@ -1,7 +1,7 @@
 '''
 Date: 2021-11-10 15:09:38
 LastEditors: Kunyang Xie
-LastEditTime: 2021-11-18 14:48:05
+LastEditTime: 2021-11-19 13:43:33
 FilePath: /a3/ece650-a1.py
 '''
 
@@ -289,8 +289,8 @@ class Map:
                 for i, vertice in enumerate(vertices):
                     V[i] = vertice
                 if(len(V) == 0):
-                    print("V 0")
-                    print("E {}")
+                    print("V 0", flush=True)
+                    print("E {}", flush=True)
                 else:
                     for i in range(len(intersection)):
                         pi = intersection[i]    # The intersection
@@ -318,12 +318,13 @@ class Map:
 
 
 def printResult(V, E):
-    print("V ", end='')
-    print(len(V))
-    print("E {", end='')
+    print("V ", end='', flush=True)
+    print(len(V), flush=True)
+    print("E {", end='', flush=True)
     for i in range(len(E) - 1):
-        print("<{},{}>,".format(E[i][0], E[i][1]), end='')
-    print("<{},{}>".format(E[len(E) - 1][0], E[len(E) - 1][1]), end='')
+        print("<{},{}>,".format(E[i][0], E[i][1]), end='', flush=True)
+    print("<{},{}>".format(E[len(E) - 1][0],
+          E[len(E) - 1][1]), end='', flush=True)
     print("}")
 
 

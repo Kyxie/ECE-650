@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-11-10 15:09:38
  * @LastEditors: Kunyang Xie
- * @LastEditTime: 2021-11-18 14:38:24
+ * @LastEditTime: 2021-11-19 14:20:28
  * @FilePath: /a3/rgen.cpp
  */
 
@@ -10,7 +10,8 @@
 #include <string>
 #include <unistd.h>
 #include <vector>
-const int A = 25; // Attempt times
+const int A = 25;	  // Attempt time
+const int B = 100000; // Run time
 const int smin = 2;
 const int nmin = 1; // Line segment number, probably need to be changed.
 const int lmin = 5;
@@ -373,7 +374,7 @@ void printCommand(vector<struct Street> Map)
 int main(int argc, char *argv[])
 {
 	assign(argc, argv);
-	while (1)
+	for (int i = 0; i < B; i++)
 	{
 		int wait = unRandGen(lmin, kl); // wait [5, kl]
 		Map.clear();

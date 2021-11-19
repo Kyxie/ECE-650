@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-11-10 20:32:11
  * @LastEditors: Kunyang Xie
- * @LastEditTime: 2021-11-19 12:23:40
+ * @LastEditTime: 2021-11-19 14:55:17
  * @FilePath: /a3/ece650-a2.cpp
  */
 
@@ -152,9 +152,15 @@ void print(vector<int> route)
 	for (int i = route.size() - 1; i >= 0; i--)
 	{
 		if (i != 0)
+		{
 			cout << route[i] << '-';
+			cout.flush();
+		}
 		else
+		{
 			cout << route[i];
+			cout.flush();
+		}
 	}
 	cout << endl;
 }
@@ -167,12 +173,14 @@ int main()
 		getline(cin, line);
 		if (line[0] == 'V')
 		{
+			cout << line << endl;
 			first.clear();
 			second.clear();
 			VNum = V(line);
 		}
 		else if (line[0] == 'E')
 		{
+			cout << line << endl;
 			for (int i = 3; i <= line.length(); i++)
 			{
 				if (line[i] == '<')
@@ -234,7 +242,7 @@ int main()
 			}
 			else
 			{
-				cout << "Error: No path exists!" << endl;
+				cerr << "Error: No path exists!" << endl;
 				continue;
 			}
 		}

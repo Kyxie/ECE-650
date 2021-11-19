@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-11-10 15:09:38
  * @LastEditors: Kunyang Xie
- * @LastEditTime: 2021-11-19 12:31:09
+ * @LastEditTime: 2021-11-19 14:55:46
  * @FilePath: /a3/ece650-a3.cpp
  */
 
@@ -44,12 +44,6 @@ void a2Input()
 	}
 }
 
-void a1Output()
-{
-	char *argv[] = {(char *)"./a1print", NULL};
-	execv(argv[0], argv);
-}
-
 int main(int argc, char *argv[])
 {
 	vector<pid_t> kids;
@@ -58,10 +52,28 @@ int main(int argc, char *argv[])
 	pipe(rgentoA1);
 	int A1toA2[2];
 	pipe(A1toA2);
-	int A1toStdout[2];
-	pipe(A1toStdout);
 
 	pid_t pid = fork();
+	if (pid == 0)
+	{
+		// Redirect a1's input and output
+		dup2(rgentoA1[0], STDIN_FILENO);
+		close(rgentoA1[0]);
+		close(rgentoA1[1]);
+
+		dup2(A1toA2[1], STDOUT_FILENO);
+		close(A1toA2[0]);
+		close(A1toA2[1]);
+		a1();
+	}
+	else if (pid < 0)
+	{
+		cerr << "Error: Could not fork!" << endl;
+		return 1;
+	}
+	kids.push_back(pid);
+
+	pid = fork();
 	if (pid == 0)
 	{
 		// Redirect rgen's output
@@ -80,47 +92,7 @@ int main(int argc, char *argv[])
 	pid = fork();
 	if (pid == 0)
 	{
-		// Redirect a1's input and output
-		dup2(rgentoA1[0], STDIN_FILENO);
-		close(rgentoA1[0]);
-		close(rgentoA1[1]);
-
-		dup2(A1toA2[1], STDOUT_FILENO);
-		close(A1toA2[0]);
-		close(A1toA2[1]);
-
-		dup2(A1toStdout[1], STDOUT_FILENO);
-		close(A1toStdout[0]);
-		close(A1toStdout[1]);
-		a1();
-	}
-	else if (pid < 0)
-	{
-		cerr << "Error: Could not fork!" << endl;
-		return 1;
-	}
-	kids.push_back(pid);
-
-	pid = fork();
-	if (pid == 0)
-	{
-		// Redirect aOutput's input to a1
-		dup2(A1toStdout[0], STDIN_FILENO);
-		close(A1toStdout[0]);
-		close(A1toStdout[1]);
-		a1Output();
-	}
-	else if (pid < 0)
-	{
-		cerr << "Error: Could not fork!" << endl;
-		return 1;
-	}
-	kids.push_back(pid);
-
-	pid = fork();
-	if (pid == 0)
-	{
-		// Redirect a2's input
+		// Redirect stdin for A2 to the read end of the pipe, A1toA2.
 		dup2(A1toA2[0], STDIN_FILENO);
 		close(A1toA2[0]);
 		close(A1toA2[1]);
@@ -128,12 +100,11 @@ int main(int argc, char *argv[])
 	}
 	else if (pid < 0)
 	{
-		cerr << "Error: Could not fork!" << endl;
+		std::cerr << "Error: Could not fork rgen!" << endl;
 		return 1;
 	}
 	kids.push_back(pid);
 
-	// Redirect a2Input's output to a2
 	dup2(A1toA2[1], STDOUT_FILENO);
 	close(A1toA2[0]);
 	close(A1toA2[1]);
