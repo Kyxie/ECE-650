@@ -1,7 +1,7 @@
 '''
 Date: 2021-11-10 15:09:38
 LastEditors: Kunyang Xie
-LastEditTime: 2021-11-19 13:43:33
+LastEditTime: 2021-11-19 15:16:31
 FilePath: /a3/ece650-a1.py
 '''
 
@@ -318,14 +318,13 @@ class Map:
 
 
 def printResult(V, E):
-    print("V ", end='', flush=True)
-    print(len(V), flush=True)
-    print("E {", end='', flush=True)
+    print("V {}".format(len(V)), flush=True)
+    print("E {", end='')
     for i in range(len(E) - 1):
         print("<{},{}>,".format(E[i][0], E[i][1]), end='', flush=True)
     print("<{},{}>".format(E[len(E) - 1][0],
           E[len(E) - 1][1]), end='', flush=True)
-    print("}")
+    print("}", flush=True)
 
 
 def findIntersection(x1, y1, x2, y2, x3, y3, x4, y4):

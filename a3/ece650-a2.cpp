@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-11-10 20:32:11
  * @LastEditors: Kunyang Xie
- * @LastEditTime: 2021-11-19 14:55:17
+ * @LastEditTime: 2021-11-19 15:10:03
  * @FilePath: /a3/ece650-a2.cpp
  */
 
@@ -171,16 +171,15 @@ int main()
 	{
 		string line;
 		getline(cin, line);
+		cout << line << endl;
 		if (line[0] == 'V')
 		{
-			cout << line << endl;
 			first.clear();
 			second.clear();
 			VNum = V(line);
 		}
 		else if (line[0] == 'E')
 		{
-			cout << line << endl;
 			for (int i = 3; i <= line.length(); i++)
 			{
 				if (line[i] == '<')
