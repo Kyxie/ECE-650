@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-11-10 15:09:38
  * @LastEditors: Kunyang Xie
- * @LastEditTime: 2021-11-21 00:09:07
+ * @LastEditTime: 2021-11-21 16:02:18
  * @FilePath: /a3/rgen.cpp
  */
 
@@ -41,18 +41,12 @@ void assign(int argc, char *argv[])
 		{
 		case 's':
 			ks = atoi(argv[i + 1]);
-			if (ks < smin)
-				ks = smin;
 			break;
 		case 'n':
 			kn = atoi(argv[i + 1]);
-			if (kn < nmin)
-				kn = nmin;
 			break;
 		case 'l':
 			kl = atoi(argv[i + 1]);
-			if (kl < lmin)
-				kl = lmin;
 			break;
 		case 'c':
 			kc = atoi(argv[i + 1]);
@@ -226,7 +220,7 @@ void generateMap()
 			if (k >= A)
 			{
 				cerr << "Error: Failed to generate valid input for " << A << " simultaneous attempts!" << endl;
-				break;
+				exit(1);
 			}
 			if (Map.size() < 1) // 0 street
 			{
