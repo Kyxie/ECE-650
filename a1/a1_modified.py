@@ -123,11 +123,6 @@ class Map:
                         print("Error: No more than 1 white space in street name!")
                         do = 0
 
-                    plus = re.search(r'\+', self.line)
-                    if(plus):
-                        print("Error: Input positive number without '+' sign!")
-                        do = 0
-
                     numOfBracket = 0
                     for i in range(len(self.line)):
                         if(self.line[i] == '('):
@@ -136,7 +131,7 @@ class Map:
                         print("Error: Not enough points for a line")
                         do = 0
 
-                    specialCharacter = "~!@#$%^&*()_+`1234567890-=\{\}|[]\\;:,./<>?"
+                    specialCharacter = "~!@#$%^&*()_+`-=\{\}|[]\\;:,./<>?"
                     for i in range(len(specialCharacter)):
                         if(specialCharacter[i] in Name):
                             print("Error: No special characters or numbers!")
