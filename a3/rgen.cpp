@@ -1,8 +1,8 @@
 /*
  * @Date: 2021-11-10 15:09:38
  * @LastEditors: Kunyang Xie
- * @LastEditTime: 2021-11-21 16:02:18
- * @FilePath: /a3/rgen.cpp
+ * @LastEditTime: 2021-11-23 22:25:48
+ * @FilePath: /k47xie/a3/rgen.cpp
  */
 
 #include <fstream>
@@ -41,12 +41,27 @@ void assign(int argc, char *argv[])
 		{
 		case 's':
 			ks = atoi(argv[i + 1]);
+			if (ks < smin)
+			{
+				cerr << "Error: ks should be larger than " << smin << "!" << endl;
+				exit(1);
+			}
 			break;
 		case 'n':
 			kn = atoi(argv[i + 1]);
+			if (kn < nmin)
+			{
+				cerr << "Error: kn should be larger than " << nmin << "!" << endl;
+				exit(1);
+			}
 			break;
 		case 'l':
 			kl = atoi(argv[i + 1]);
+			if (kl < lmin)
+			{
+				cerr << "Error: kl should be larger than " << lmin << "!" << endl;
+				exit(1);
+			}
 			break;
 		case 'c':
 			kc = atoi(argv[i + 1]);
