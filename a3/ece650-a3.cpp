@@ -1,8 +1,8 @@
 /*
  * @Date: 2021-11-10 15:09:38
  * @LastEditors: Kunyang Xie
- * @LastEditTime: 2021-11-19 14:55:46
- * @FilePath: /a3/ece650-a3.cpp
+ * @LastEditTime: 2021-11-27 12:49:25
+ * @FilePath: /k47xie/a3/ece650-a3.cpp
  */
 
 #include <fcntl.h>
@@ -10,6 +10,10 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <vector>
+
+const int smin = 2;
+const int nmin = 1; // Line segment number, probably need to be changed.
+const int lmin = 5;
 
 using namespace std;
 
@@ -44,78 +48,117 @@ void a2Input()
 	}
 }
 
+bool check(int argc, char *argv[])
+{
+	bool good = true;
+	for (int i = 1; i < argc; i++)
+	{
+		switch (argv[i][1])
+		{
+		case 's':
+			if (atoi(argv[i + 1]) < smin)
+			{
+				cerr << "Error: ks should be larger than " << smin << "!" << endl;
+				good = false;
+				exit(1);
+			}
+			break;
+		case 'n':
+			if (atoi(argv[i + 1]) < nmin)
+			{
+				cerr << "Error: kn should be larger than " << nmin << "!" << endl;
+				good = false;
+				exit(1);
+			}
+			break;
+		case 'l':
+			if (atoi(argv[i + 1]) < lmin)
+			{
+				cerr << "Error: kl should be larger than " << lmin << "!" << endl;
+				good = false;
+				exit(1);
+			}
+			break;
+		}
+	}
+	return good;
+}
+
 int main(int argc, char *argv[])
 {
-	vector<pid_t> kids;
-
-	int rgentoA1[2];
-	pipe(rgentoA1);
-	int A1toA2[2];
-	pipe(A1toA2);
-
-	pid_t pid = fork();
-	if (pid == 0)
+	if (check(argc, argv) == 1)
 	{
-		// Redirect a1's input and output
-		dup2(rgentoA1[0], STDIN_FILENO);
-		close(rgentoA1[0]);
-		close(rgentoA1[1]);
+		vector<pid_t> kids;
+
+		int rgentoA1[2];
+		pipe(rgentoA1);
+		int A1toA2[2];
+		pipe(A1toA2);
+
+		pid_t pid = fork();
+		if (pid == 0)
+		{
+			// Redirect a1's input and output
+			dup2(rgentoA1[0], STDIN_FILENO);
+			close(rgentoA1[0]);
+			close(rgentoA1[1]);
+
+			dup2(A1toA2[1], STDOUT_FILENO);
+			close(A1toA2[0]);
+			close(A1toA2[1]);
+			a1();
+		}
+		else if (pid < 0)
+		{
+			cerr << "Error: Could not fork!" << endl;
+			return 1;
+		}
+		kids.push_back(pid);
+
+		pid = fork();
+		if (pid == 0)
+		{
+			// Redirect rgen's output
+			dup2(rgentoA1[1], STDOUT_FILENO);
+			close(rgentoA1[0]);
+			close(rgentoA1[1]);
+			rgen(argc, argv);
+		}
+		else if (pid < 0)
+		{
+			cerr << "Error: Could not fork!" << endl;
+			return 1;
+		}
+		kids.push_back(pid);
+
+		pid = fork();
+		if (pid == 0)
+		{
+			// Redirect stdin for A2 to the read end of the pipe, A1toA2.
+			dup2(A1toA2[0], STDIN_FILENO);
+			close(A1toA2[0]);
+			close(A1toA2[1]);
+			a2();
+		}
+		else if (pid < 0)
+		{
+			std::cerr << "Error: Could not fork rgen!" << endl;
+			return 1;
+		}
+		kids.push_back(pid);
 
 		dup2(A1toA2[1], STDOUT_FILENO);
 		close(A1toA2[0]);
 		close(A1toA2[1]);
-		a1();
-	}
-	else if (pid < 0)
-	{
-		cerr << "Error: Could not fork!" << endl;
-		return 1;
-	}
-	kids.push_back(pid);
+		a2Input();
 
-	pid = fork();
-	if (pid == 0)
-	{
-		// Redirect rgen's output
-		dup2(rgentoA1[1], STDOUT_FILENO);
-		close(rgentoA1[0]);
-		close(rgentoA1[1]);
-		rgen(argc, argv);
-	}
-	else if (pid < 0)
-	{
-		cerr << "Error: Could not fork!" << endl;
-		return 1;
-	}
-	kids.push_back(pid);
-
-	pid = fork();
-	if (pid == 0)
-	{
-		// Redirect stdin for A2 to the read end of the pipe, A1toA2.
-		dup2(A1toA2[0], STDIN_FILENO);
-		close(A1toA2[0]);
-		close(A1toA2[1]);
-		a2();
-	}
-	else if (pid < 0)
-	{
-		std::cerr << "Error: Could not fork rgen!" << endl;
-		return 1;
-	}
-	kids.push_back(pid);
-
-	dup2(A1toA2[1], STDOUT_FILENO);
-	close(A1toA2[0]);
-	close(A1toA2[1]);
-	a2Input();
-
-	// Kill all the children process
-	for (pid_t k : kids)
-	{
-		int status;
-		kill(k, SIGTERM);
-		waitpid(k, &status, 0);
+		// Kill all the children process
+		for (pid_t k : kids)
+		{
+			int status;
+			kill(k, SIGTERM);
+			waitpid(k, &status, 0);
+		}
 	}
 	return 0;
 }
