@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-11-26 15:39:46
  * @LastEditors: Kunyang Xie
- * @LastEditTime: 2021-11-29 15:46:59
+ * @LastEditTime: 2021-12-02 23:41:09
  * @FilePath: /k47xie/a4/ece650-a4.cpp
  */
 
@@ -57,70 +57,70 @@ vector<int> transform(vector<int> first, vector<int> second)
 vector<int> SAT(vector<int> edge)
 {
 	unique_ptr<Minisat::Solver> solver(new Minisat::Solver());
-	int k = 1;
+	int Vk = 1;
 	vector<int> vertex_cover;
-	while (k <= VNum)
+	while (Vk <= VNum)
 	{
-		Minisat::Lit x[VNum][k];
+		Minisat::Lit x[VNum][Vk];
 		for (int i = 1; i <= VNum; i++)
 		{
-			for (int j = 1; j <= k; j++)
+			for (int j = 1; j <= Vk; j++)
 				x[i][j] = Minisat::mkLit(solver->newVar());
 		}
-		// clause 1
-		for (int i = 1; i <= k; i++)
+		// First clause
+		for (int i = 1; i <= Vk; i++)
 		{
 			Minisat::vec<Minisat::Lit> literals;
 			for (int j = 1; j <= VNum; j++)
 				literals.push(x[j][i]);
 			solver->addClause(literals);
-			// clause 3
-			for (int p = 0; p < VNum; p++)
+			// Third clause
+			for (int j = 0; j < VNum; j++)
 			{
-				for (int q = p + 1; q < VNum; q++)
-					solver->addClause(~literals[p], ~literals[q]);
+				for (int k = j + 1; k < VNum; k++)
+					solver->addClause(~literals[j], ~literals[k]);
 			}
 		}
-		// clause 2
+		// Second clause
 		for (int i = 1; i <= VNum; i++)
 		{
-			for (int j = 1; j <= k; j++)
+			for (int j = 1; j <= Vk; j++)
 			{
-				for (int m = j + 1; m <= k; m++)
-					solver->addClause(~x[i][j], ~x[i][m]);
+				for (int k = j + 1; k <= Vk; k++)
+					solver->addClause(~x[i][j], ~x[i][k]);
 			}
 		}
-		// clause 4
-		int u, v;
+		// Fourth clause
+		int front;
+		int back;
 		for (size_t i = 0; i < edge.size() - 1; i = i + 2)
 		{
-			u = edge[i];
-			v = edge[i + 1];
-			// cout << u << ' ' << v << endl;
+			front = edge[i];
+			back = edge[i + 1];
 			Minisat::vec<Minisat::Lit> cover;
-			for (int j = 1; j <= k; j++)
+			for (int j = 1; j <= Vk; j++)
 			{
-				cover.push(x[u][j]);
-				cover.push(x[v][j]);
+				cover.push(x[front][j]);
+				cover.push(x[back][j]);
 			}
 			solver->addClause(cover);
 		}
 		bool res = solver->solve();
-		int m;
+		int count;
 		if (res)
 		{
 			for (int i = 1; i <= VNum; i++)
 			{
-				for (int j = 1; j <= k; j++)
+				for (int j = 1; j <= Vk; j++)
 				{
-					m = Minisat::toInt(solver->modelValue(x[i][j]));
-					if (m == 0)
+					count = Minisat::toInt(solver->modelValue(x[i][j]));
+					if (count == 0)
 						vertex_cover.push_back(i);
 				}
 			}
 			return vertex_cover;
 		}
-		k++;
+		Vk++;
 		solver.reset(new Minisat::Solver());
 	}
 }
