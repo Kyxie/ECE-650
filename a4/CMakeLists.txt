@@ -21,3 +21,5 @@ include_directories(${CMAKE_SOURCE_DIR}/minisat)
 add_executable(ece650-a4 ece650-a4.cpp)
 # link MiniSAT libraries
 target_link_libraries(ece650-a4 minisat-lib-static)
+
+set(CMAKE_CXX_CLANG_TIDY "clang-tidy;-checks=*")

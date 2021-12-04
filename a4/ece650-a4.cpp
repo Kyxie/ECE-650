@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-11-26 15:39:46
  * @LastEditors: Kunyang Xie
- * @LastEditTime: 2021-12-02 23:41:09
+ * @LastEditTime: 2021-12-04 18:54:22
  * @FilePath: /k47xie/a4/ece650-a4.cpp
  */
 
@@ -123,6 +123,7 @@ vector<int> SAT(vector<int> edge)
 		Vk++;
 		solver.reset(new Minisat::Solver());
 	}
+	return vertex_cover;
 }
 
 void assign(void)
