@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-11-10 15:09:38
  * @LastEditors: Kunyang Xie
- * @LastEditTime: 2021-11-27 12:49:25
+ * @LastEditTime: 2021-12-04 19:00:36
  * @FilePath: /k47xie/a3/ece650-a3.cpp
  */
 
@@ -12,7 +12,7 @@
 #include <vector>
 
 const int smin = 2;
-const int nmin = 1; // Line segment number, probably need to be changed.
+const int nmin = 1;	 // Line segment number, probably need to be changed.
 const int lmin = 5;
 
 using namespace std;
@@ -50,7 +50,6 @@ void a2Input()
 
 bool check(int argc, char *argv[])
 {
-	bool good = true;
 	for (int i = 1; i < argc; i++)
 	{
 		switch (argv[i][1])
@@ -59,7 +58,6 @@ bool check(int argc, char *argv[])
 			if (atoi(argv[i + 1]) < smin)
 			{
 				cerr << "Error: ks should be larger than " << smin << "!" << endl;
-				good = false;
 				exit(1);
 			}
 			break;
@@ -67,7 +65,6 @@ bool check(int argc, char *argv[])
 			if (atoi(argv[i + 1]) < nmin)
 			{
 				cerr << "Error: kn should be larger than " << nmin << "!" << endl;
-				good = false;
 				exit(1);
 			}
 			break;
@@ -75,13 +72,12 @@ bool check(int argc, char *argv[])
 			if (atoi(argv[i + 1]) < lmin)
 			{
 				cerr << "Error: kl should be larger than " << lmin << "!" << endl;
-				good = false;
 				exit(1);
 			}
 			break;
 		}
 	}
-	return good;
+	return true;
 }
 
 int main(int argc, char *argv[])
